@@ -207,12 +207,14 @@ T Matrix<T>::minor(const Matrix& cur_matr, int deleted_rows_count, int* deleted_
     //поскольку мы вычеркиваем и строку и столбец, то на каждом шаге количество удаленных строк и столбцов одинаковое
     assert(cur_matr.vert_size == cur_matr.hor_size);
     int cur_matr_size = cur_matr.vert_size;
-    int next_deleted_col = 0, minor_size = cur_matr_size - deleted_rows_count, cur_size = 1;
+    int next_deleted_col = 0, cur_minors_column_number = 0;
+    int minor_size = cur_matr_size - deleted_rows_count;
+
     T minor_determ = 0, next_minor = 0;
+    
+    if (minor_size != 1){
 
-    if (deleted_rows_count + 1 != cur_matr_size){
-
-        for (int next_deleted_col = 0; cur_size < cur_matr_size; next_deleted_col++){
+        for (int next_deleted_col = 0; cur_minors_column_number < minor_size; next_deleted_col++){
 
             assert(next_deleted_col < cur_matr_size);
             if (!check_deleted(next_deleted_col, deleted_columns, deleted_rows_count)){
@@ -220,14 +222,14 @@ T Matrix<T>::minor(const Matrix& cur_matr, int deleted_rows_count, int* deleted_
                 deleted_columns[deleted_rows_count] = next_deleted_col;
                 next_minor = minor(cur_matr, deleted_rows_count + 1, deleted_columns);
 
-                if (cur_size % 2 == 0){
+                if (cur_minors_column_number % 2 == 0){
                     
                     minor_determ += cur_matr[deleted_rows_count][next_deleted_col] * next_minor;
                 } else{
 
                     minor_determ += (-1) * cur_matr[deleted_rows_count][next_deleted_col] * next_minor;
                 }
-                cur_size++;
+                cur_minors_column_number++;
             }
         }
 
@@ -254,7 +256,7 @@ T Matrix<T>::determinant(){
     int* deleted_columns = new int[hor_size];
 
     for (int i = 0; i < hor_size; i++){
-
+        std::cout << i << '\n'; 
         deleted_columns[0] = i;
 
         if ((i % 2) == 0){
